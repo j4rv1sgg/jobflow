@@ -31,9 +31,6 @@ jobs:
       # 6. Build Next.js (also checks TypeScript)
       - run: npm run build
 
-      # # 7. Run tests 
-      # - run: npm test || echo "No tests yet"
-
       # 8. Deploy to Vercel
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20 
