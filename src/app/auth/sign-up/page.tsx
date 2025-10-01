@@ -1,55 +1,30 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { signUp } from "@/lib/actions/auth-actions";
-import { authClient } from "@/lib/auth-client";
+import { signUp } from '@/lib/actions/auth-actions';
+import { authClient } from '@/lib/auth-client';
+import SignUpForm, { SignUpInputType } from '@/features/auth/components/forms/SignUpForm';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export default function SignUpPage() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { data: session, isPending } = authClient.useSession();
 
-   const { data: session, isPending } = authClient.useSession();
-   
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const result = await signUp(name, email, password);
+  const onSubmit = async (data: SignUpInputType) => {
+    await signUp(data);
+  };
+
+  if (isPending) {
+    return <p>Loading...</p>;
   }
-  if(isPending) {
-    return <p>Loading...</p>
+  if(session){
+    redirect('/dashboard')
   }
 
   return (
     <>
-    <div>
-      {session ? (
-        <div>
-          <p>Signed in as {session.user.name}</p>
-          <button onClick={() => authClient.signOut()}>Sign out</button>
-        </div>
-      ) : (
-        <p>Not signed in</p>
-      )}
-    </div>
-    <form onSubmit={handleSubmit}>
-      <label>
-        Name:
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-      </label>
-
-      <label>
-        Email:
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      </label>
-
-      <label>
-        Password:
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      </label>
-
-      <button type="submit">Sign up</button>
-    </form>
-    
+      <h1>Sign up</h1>
+      <SignUpForm onSubmit={onSubmit} />
+      <p>Already have an account? <Link className='underline' href="/auth/sign-in">Sign in</Link></p>
     </>
   );
 }

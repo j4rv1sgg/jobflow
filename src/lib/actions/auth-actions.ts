@@ -1,25 +1,24 @@
 'use server';
 
+import { SignUpInputType } from '@/features/auth/components/forms/SignUpForm';
 import { auth } from '../auth';
 import { headers } from 'next/headers';
+import { SignInInputType } from '@/features/auth/components/forms/SignInForm';
 
-export const signUp = async (name: string, email: string, password: string) => {
+export const signUp = async (data: SignUpInputType) => {
   const result = await auth.api.signUpEmail({
     body: {
-      email,
-      password,
-      name,
-      callbackURL: '/',
+      ...data,
+      callbackURL: '/dashboard',
     },
   });
   return result;
 };
 
-export const signIn = async (email: string, password: string) => {
+export const signIn = async (data: SignInInputType) => {
   const result = await auth.api.signInEmail({
     body: {
-      email,
-      password,
+      ...data,
       callbackURL: '/dashboard',
     },
   });
