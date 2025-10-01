@@ -72,7 +72,9 @@ export default function SignUpForm({
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="w-full">
+          Sign Up
+        </Button>
       </form>
     </Form>
   );

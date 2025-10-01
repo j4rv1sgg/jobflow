@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 
 export const signInSchema = z.object({
   email: z.string().email('Invalid email'),
-  password: z.string()
+  password: z.string(),
 });
 export type SignInInputType = z.infer<typeof signInSchema>;
 
@@ -58,7 +58,9 @@ export default function SignInForm({
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="w-full">
+          Sign In
+        </Button>
       </form>
     </Form>
   );
