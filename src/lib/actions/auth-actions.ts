@@ -6,23 +6,35 @@ import { headers } from 'next/headers';
 import { SignInInputType } from '@/features/auth/components/forms/SignInForm';
 
 export const signUp = async (data: SignUpInputType) => {
-  const result = await auth.api.signUpEmail({
-    body: {
-      ...data,
-      callbackURL: '/dashboard',
-    },
-  });
-  return result;
+  try {
+    const result = await auth.api.signUpEmail({
+      body: { ...data },
+    });
+    return { success: true, data: result };
+  } catch (err: unknown) {
+    console.error('SignUp error:', err);
+    return {
+      success: false,
+      message: (err as Error)?.message, 
+     
+    };
+  }
 };
 
 export const signIn = async (data: SignInInputType) => {
-  const result = await auth.api.signInEmail({
-    body: {
-      ...data,
-      callbackURL: '/dashboard',
-    },
-  });
-  return result;
+   try {
+    const result = await auth.api.signInEmail({
+      body: { ...data },
+    });
+    return { success: true, data: result };
+  } catch (err: unknown) {
+    console.error('SignIn error:', err);
+    return {
+      success: false,
+      message: (err as Error)?.message, 
+     
+    };
+  }
 };
 
 export const getSession = async () => {

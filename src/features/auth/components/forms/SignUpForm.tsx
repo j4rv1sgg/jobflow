@@ -13,22 +13,36 @@ import {
 import { Input } from '@/components/ui/input';
 import z from 'zod';
 import { Button } from '@/components/ui/button';
+import { signUp } from '@/lib/actions/auth-actions';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export const signUpSchema = z.object({
-  name: z.string().min(2, 'Name is too short'),
-  email: z.string().email('Invalid email'),
-  password: z.string().min(6, 'Password must be at least 6 chars'),
+  name: z.string().min(1, 'Name is required').min(2, 'Name is too short'),
+  email: z.string().min(1, 'Email is required').email('Invalid email'),
+  password: z.string().min(8, 'Password must be at least 8 chars'),
 });
 export type SignUpInputType = z.infer<typeof signUpSchema>;
 
-export default function SignUpForm({
-  onSubmit,
-}: {
-  onSubmit: (data: SignUpInputType) => void;
-}) {
+export default function SignUpForm() {
+  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
   const form = useForm<SignUpInputType>({
     resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+    },
   });
+  const onSubmit = async (data: SignUpInputType) => {
+    const res = await signUp(data);
+    if (res.success) {
+      router.push('/dashboard');
+    } else {
+      setServerError(res.message ?? '');
+    }
+  };
 
   return (
     <Form {...form}>
@@ -53,7 +67,14 @@ export default function SignUpForm({
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="name@example.com" {...field} />
+                <Input
+                  placeholder="name@example.com"
+                  {...field}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    setServerError(null);
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -72,8 +93,13 @@ export default function SignUpForm({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          Sign Up
+        {serverError && <FormMessage>{serverError}</FormMessage>}
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting ? 'Signing Up...' : 'Sign Up'}
         </Button>
       </form>
     </Form>
