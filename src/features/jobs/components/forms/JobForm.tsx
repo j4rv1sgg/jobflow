@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { generateCoverLetter } from '../../lib/generate-cover-letter';
 
 enum JobStatus {
   applied = 'applied',
@@ -49,10 +50,16 @@ export default function JobForm() {
       appliedAt: new Date(),
     },
   });
-  const { handleSubmit, setError, formState } = form;
-  // const [serverError, setServerError] = useState<string | null>(null);
+  const { handleSubmit, formState } = form;
   const onSubmit = (data: JobInputType) => {
-    console.log(data)
+    console.log(data);
+  };
+
+  const handleGenerateCoverLetter = async () => {
+    const data = form.getValues();
+    const response = await generateCoverLetter(data);
+    form.setValue('coverLetter', response);
+    console.log(response);
   };
 
   return (
@@ -104,20 +111,34 @@ export default function JobForm() {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea rows={4} className='max-h-[120px]' {...field} />
+                <Textarea rows={4} className="max-h-[120px]" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        {/* {serverError && <FormMessage>{serverError}</FormMessage>} */}
+        <FormField
+          control={form.control}
+          name="coverLetter"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Cover Letter</FormLabel>
+              <FormControl>
+                <Textarea rows={4} className="max-h-[120px]" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button className="w-full" onClick={handleGenerateCoverLetter}>
+          Generate Cover Letter
+        </Button>
         <Button
           type="submit"
           className="w-full"
           disabled={formState.isSubmitting}
         >
-          {formState.isSubmitting ? 
-          'Saving...' : 'Save'}
+          {formState.isSubmitting ? 'Saving...' : 'Save'}
         </Button>
       </form>
     </Form>
