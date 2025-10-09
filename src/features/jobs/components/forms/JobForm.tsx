@@ -64,7 +64,7 @@ export default function JobForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="company"

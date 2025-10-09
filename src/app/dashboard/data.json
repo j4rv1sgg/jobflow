@@ -1,0 +1,15 @@
+[{
+  "id": 1,
+  "userId": "user_12345",
+  "company": "TechCorp",
+  "title": "Frontend Developer",
+  "link": "https://techcorp.com/careers/frontend-developer",
+  "description": "Develop and maintain user interfaces using React and TypeScript.",
+  "status": "Applied",
+  "notes": "Had a quick chat with the recruiter, waiting for technical interview.",
+  "coverLetter": "Dear Hiring Manager, I'm excited to apply for the Frontend Developer position...",
+  "appliedAt": "2025-10-01T09:30:00Z",
+  "createdAt": "2025-09-30T15:45:00Z",
+  "updatedAt": "2025-10-02T10:00:00Z"
+}
+]
