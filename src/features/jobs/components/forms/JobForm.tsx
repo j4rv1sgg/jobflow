@@ -11,30 +11,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { generateCoverLetter } from '../../lib/generate-cover-letter';
-
-enum JobStatus {
-  applied = 'applied',
-  interview = 'interview',
-  offer = 'offer',
-  rejected = 'rejected',
-}
-
-export const jobSchema = z.object({
-  company: z.string().min(1),
-  title: z.string().min(1),
-  link: z.string().min(1).url(),
-  status: z.enum(JobStatus),
-  description: z.string().optional(),
-  notes: z.string().optional(),
-  coverLetter: z.string().optional(),
-  appliedAt: z.date().optional(),
-});
-
-export type JobInputType = z.infer<typeof jobSchema>;
+import {
+  JobInputType,
+  jobSchema,
+  JobStatus,
+} from '../../lib/validations/job-schema';
+import axios from 'axios';
 
 export default function JobForm() {
   const form = useForm<JobInputType>({
@@ -47,12 +32,16 @@ export default function JobForm() {
       description: '',
       notes: '',
       coverLetter: '',
-      appliedAt: new Date(),
     },
   });
   const { handleSubmit, formState } = form;
-  const onSubmit = (data: JobInputType) => {
-    console.log(data);
+
+  const onSubmit = async (data: JobInputType) => {
+    try {
+      await axios.post('/api/jobs', data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleGenerateCoverLetter = async () => {

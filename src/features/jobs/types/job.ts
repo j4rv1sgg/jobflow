@@ -8,7 +8,7 @@ export type JobType = {
   status: string;
   notes?: string;
   coverLetter?: string;
-  appliedAt?: string;
-  createdAt: string;
-  updatedAt: string;
+  appliedAt: Date;
+  createdAt: Date;
+  updatedAt?: Date;
 };

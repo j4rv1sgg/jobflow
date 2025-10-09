@@ -74,7 +74,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { JobType } from '@/app/types';
+import { JobType } from '@/features/jobs/types/job';
 
 const columns: ColumnDef<JobType>[] = [
   {
@@ -153,7 +153,6 @@ const columns: ColumnDef<JobType>[] = [
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-32">
           <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Make a copy</DropdownMenuItem>
           <DropdownMenuItem>Favorite</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>

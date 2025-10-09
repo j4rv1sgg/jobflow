@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios';
-import { JobInputType } from '../components/forms/JobForm';
+import { JobInputType } from './validations/job-schema';
 
 export const generateCoverLetter = async (jobDetails: JobInputType) => {
   try {
