@@ -22,7 +22,6 @@ export async function POST(req: Request) {
   const response = await db.insert(jobs).values({
     ...parsed.data,
     userId: authData.user.id,
-    appliedAt: new Date(),
   })
   return NextResponse.json(response, { status: 201 });
 }
