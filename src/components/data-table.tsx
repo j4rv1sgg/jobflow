@@ -107,32 +107,24 @@ const columns: ColumnDef<JobType>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+  
   {
     accessorKey: 'title',
     header: 'Target Job',
-    cell: ({ row }) => {
-      <div className="w-32">
-          {row.original.title}
-      </div>;
-    },
-    enableHiding: false,
+    cell: ({ row }) => <div>{row.original.title}</div>,
   },
   {
     accessorKey: 'company',
     header: 'Company',
-    cell: ({ row }) => (
-      <div className="w-32">
-          {row.original.company}
-      </div>
-    ),
+    cell: ({ row }) => <Badge variant="outline">{row.original.company}</Badge>,
   },
   {
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => (
       <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.status === 'Done' ? (
-          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+        {row.original.status === 'Rejected' ? (
+          <IconCircleCheckFilled className="fill-red-500 dark:fill-red-400" />
         ) : (
           <IconLoader />
         )}
@@ -143,11 +135,7 @@ const columns: ColumnDef<JobType>[] = [
   {
     accessorKey: 'date',
     header: 'Application Date',
-    cell: ({ row }) => (
-      <div className="w-32">
-          {row.original.appliedAt}
-      </div>
-    ),
+    cell: ({ row }) => <div className="w-32">{row.original.appliedAt}</div>,
   },
   {
     id: 'actions',
