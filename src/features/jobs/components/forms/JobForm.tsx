@@ -20,8 +20,9 @@ import {
   JobStatus,
 } from '../../lib/validations/job-schema';
 import axios from 'axios';
+import { toast } from 'sonner';
 
-export default function JobForm() {
+export default function JobForm({setIsDialogOpen}: {setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
   const form = useForm<JobInputType>({
     resolver: zodResolver(jobSchema),
     defaultValues: {
@@ -38,9 +39,16 @@ export default function JobForm() {
 
   const onSubmit = async (data: JobInputType) => {
     try {
-      await axios.post('/api/jobs', data);
+      const res = await axios.post('/api/jobs', data);
+      console.log(res)
+      if(res.status === 201) {
+        form.reset();
+        toast.success("Application has been saved")
+      }
+      setIsDialogOpen(false)
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong")
     }
   };
 

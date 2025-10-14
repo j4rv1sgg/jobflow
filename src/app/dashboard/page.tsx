@@ -3,11 +3,8 @@ import { DataTable } from '@/components/data-table';
 import { SiteHeader } from '@/components/site-header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
-import JobForm from '@/features/jobs/components/forms/JobForm';
-import { Card } from '@/components/ui/card';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 export default async function Page() {
   const session = await auth.api.getSession({
@@ -31,15 +28,6 @@ export default async function Page() {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <Dialog>
-                <DialogTrigger>Open</DialogTrigger>
-                <DialogContent className='bg-card'>
-                  <DialogHeader>
-                    <DialogTitle className='mb-4'>Save Application</DialogTitle>
-                   <JobForm />
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
               <DataTable data={[]} />
             </div>
           </div>

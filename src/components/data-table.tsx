@@ -195,6 +195,7 @@ function DraggableRow({ row }: { row: Row<JobType> }) {
 }
 
 export function DataTable({ data }: { data: JobType[] }) {
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -282,7 +283,7 @@ export function DataTable({ data }: { data: JobType[] }) {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Dialog>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger>
               <Button variant="outline" size="sm">
                 <IconPlus />
@@ -292,7 +293,7 @@ export function DataTable({ data }: { data: JobType[] }) {
             <DialogContent className="bg-card">
               <DialogHeader>
                 <DialogTitle className="mb-4">Save Application</DialogTitle>
-                <JobForm />
+                <JobForm setIsDialogOpen={setIsDialogOpen} />
               </DialogHeader>
             </DialogContent>
           </Dialog>
