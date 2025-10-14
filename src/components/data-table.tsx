@@ -75,6 +75,14 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { JobType } from '@/features/jobs/types/job';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog';
+import JobForm from '@/features/jobs/components/forms/JobForm';
 
 const columns: ColumnDef<JobType>[] = [
   {
@@ -107,7 +115,7 @@ const columns: ColumnDef<JobType>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  
+
   {
     accessorKey: 'title',
     header: 'Target Job',
@@ -274,10 +282,20 @@ export function DataTable({ data }: { data: JobType[] }) {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm">
-            <IconPlus />
-            <span className="hidden lg:inline">Add Application</span>
-          </Button>
+          <Dialog>
+            <DialogTrigger>
+              <Button variant="outline" size="sm">
+                <IconPlus />
+                <span className="hidden lg:inline">Add Application</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-card">
+              <DialogHeader>
+                <DialogTitle className="mb-4">Save Application</DialogTitle>
+                <JobForm />
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <TabsContent

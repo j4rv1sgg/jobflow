@@ -48,7 +48,6 @@ export default function JobForm() {
     const data = form.getValues();
     const response = await generateCoverLetter(data);
     form.setValue('coverLetter', response);
-    console.log(response);
   };
 
   return (
@@ -119,16 +118,19 @@ export default function JobForm() {
             </FormItem>
           )}
         />
-        <Button className="w-full" onClick={handleGenerateCoverLetter}>
-          Generate Cover Letter
-        </Button>
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={formState.isSubmitting}
-        >
-          {formState.isSubmitting ? 'Saving...' : 'Save'}
-        </Button>
+        <div className="flex gap-2">
+          <Button className="w-1/2 flex flex-col gap-0" onClick={handleGenerateCoverLetter}>
+            <p>Generate Cover Letter</p>
+            <p className='text-[10px]'>powered by AI</p>
+          </Button>
+          <Button
+            type="submit"
+            className="w-1/2"
+            disabled={formState.isSubmitting}
+          >
+            {formState.isSubmitting ? 'Saving...' : 'Save'}
+          </Button>
+        </div>
       </form>
     </Form>
   );
