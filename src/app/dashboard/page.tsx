@@ -3,12 +3,18 @@ import { DataTable } from '@/components/data-table';
 import { SiteHeader } from '@/components/site-header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
-// import data from './data.json';
 import JobForm from '@/features/jobs/components/forms/JobForm';
 import { Card } from '@/components/ui/card';
+import { auth } from '@/lib/auth';
+import { headers } from 'next/headers';
 
-export default function Page() {
-  
+export default async function Page() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) {
+    return <div>Unauthorized</div>;
+  }
   return (
     <SidebarProvider
       style={
@@ -18,13 +24,13 @@ export default function Page() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar userData={session.user} variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <Card className='w-[350px] p-5'>
+              <Card className="w-[350px] p-5">
                 <JobForm />
               </Card>
               <DataTable data={[]} />
