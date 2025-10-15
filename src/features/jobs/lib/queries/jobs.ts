@@ -17,3 +17,6 @@ export async function postJob(data: JobInputType & { userId: string }) {
   return await db.insert(jobs).values(data);
 }
 
+export async function deleteJob(id: string) {
+  return await db.delete(jobs).where(eq(jobs.id, id));
+}

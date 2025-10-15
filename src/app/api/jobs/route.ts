@@ -2,7 +2,7 @@ import { jobSchema } from '@/features/jobs/lib/validations/job-schema';
 import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { getUserJobs, postJob } from '@/features/jobs/lib/queries/jobs';
+import { deleteJob, getUserJobs, postJob } from '@/features/jobs/lib/queries/jobs';
 
 export async function GET() {
   try {
@@ -44,6 +44,29 @@ export async function POST(req: Request) {
     return NextResponse.json(response, { status: 201 });
   } catch (err) {
     console.error('POST /api/jobs failed:', err);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(req: Request) {
+  const url = new URL(req.url);
+  const id = url.searchParams.get('id');
+
+  if (!id) {
+    return NextResponse.json(
+      { error: 'Missing id parameter' },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const response = await deleteJob(id);
+    return NextResponse.json(response, { status: 200 });
+  } catch (err) {
+    console.error('DELETE /api/jobs failed:', err);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
