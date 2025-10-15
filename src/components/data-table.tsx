@@ -80,9 +80,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from './ui/dialog';
-import JobForm from '@/features/jobs/components/forms/JobForm';
+import JobForm from '@/features/jobs/components/forms/job-form';
 
 const columns: ColumnDef<JobType>[] = [
   {
@@ -143,7 +142,7 @@ const columns: ColumnDef<JobType>[] = [
   {
     accessorKey: 'date',
     header: 'Application Date',
-    cell: ({ row }) => <div className="w-32">{row.original.appliedAt}</div>,
+    cell: ({ row }) => <div className="w-32">{new Date(row.original.appliedAt).toDateString()}</div>,
   },
   {
     id: 'actions',
@@ -284,12 +283,10 @@ export function DataTable({ data }: { data: JobType[] }) {
             </DropdownMenuContent>
           </DropdownMenu>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={()=> setIsDialogOpen(true)}>
                 <IconPlus />
                 <span className="hidden lg:inline">Add Application</span>
               </Button>
-            </DialogTrigger>
             <DialogContent className="bg-card">
               <DialogHeader>
                 <DialogTitle className="mb-4">Save Application</DialogTitle>

@@ -1,14 +1,14 @@
 export type JobType = {
-  id: number;
+  id: string;
   userId: string;
   company: string;
   title: string;
   link: string;
-  description?: string;
+  description: string | null;
   status: string;
-  notes?: string;
-  coverLetter?: string;
+  notes: string | null;
+  coverLetter: string | null;
   appliedAt: Date;
   createdAt: Date;
-  updatedAt?: Date;
+  updatedAt: Date | null;
 };

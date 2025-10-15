@@ -19,8 +19,8 @@ import {
   jobSchema,
   JobStatus,
 } from '../../lib/validations/job-schema';
-import axios from 'axios';
 import { toast } from 'sonner';
+import { api } from '@/lib/axios';
 
 export default function JobForm({setIsDialogOpen}: {setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
   const form = useForm<JobInputType>({
@@ -39,8 +39,7 @@ export default function JobForm({setIsDialogOpen}: {setIsDialogOpen: React.Dispa
 
   const onSubmit = async (data: JobInputType) => {
     try {
-      const res = await axios.post('/api/jobs', data);
-      console.log(res)
+      const res = await api.post('/jobs', data);
       if(res.status === 201) {
         form.reset();
         toast.success("Application has been saved")
