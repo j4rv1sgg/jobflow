@@ -21,8 +21,10 @@ import {
 } from '../../lib/validations/job-schema';
 import { toast } from 'sonner';
 import { api } from '@/lib/axios';
+import { useRouter } from 'next/navigation';
 
 export default function JobForm({setIsDialogOpen}: {setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
+  const router = useRouter();
   const form = useForm<JobInputType>({
     resolver: zodResolver(jobSchema),
     defaultValues: {
@@ -43,6 +45,7 @@ export default function JobForm({setIsDialogOpen}: {setIsDialogOpen: React.Dispa
       if(res.status === 201) {
         form.reset();
         toast.success("Application has been saved")
+        router.refresh();
       }
       setIsDialogOpen(false)
     } catch (error) {
