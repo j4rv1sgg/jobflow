@@ -2,9 +2,7 @@ import { jobSchema } from '@/features/jobs/lib/validations/job-schema';
 import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { db } from '@/db';
-import { jobs } from '@/db/schema';
-import { getUserJobs } from '@/features/jobs/lib/queries/jobs';
+import { getUserJobs, postJob } from '@/features/jobs/lib/queries/jobs';
 
 export async function GET() {
   try {
@@ -19,7 +17,7 @@ export async function GET() {
     console.error('GET /api/jobs failed:', err);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -38,9 +36,17 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
   }
-  const response = await db.insert(jobs).values({
-    ...parsed.data,
-    userId: authData.user.id,
-  })
-  return NextResponse.json(response, { status: 201 });
+  try {
+    const response = await postJob({
+      ...parsed.data,
+      userId: authData.user.id,
+    });
+    return NextResponse.json(response, { status: 201 });
+  } catch (err) {
+    console.error('POST /api/jobs failed:', err);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 },
+    );
+  }
 }
