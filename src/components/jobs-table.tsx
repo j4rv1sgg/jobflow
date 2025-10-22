@@ -75,16 +75,18 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { JobType } from '@/features/jobs/types/job';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from './ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import JobForm from '@/features/jobs/components/forms/job-form';
 import { api } from '@/lib/axios';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { format, formatDistanceToNow } from 'date-fns';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip';
 
 function DraggableRow({ row }: { row: Row<JobType> }) {
   const { transform, transition, setNodeRef } = useSortable({
@@ -110,7 +112,7 @@ function DraggableRow({ row }: { row: Row<JobType> }) {
   );
 }
 
-export function DataTable({ data }: { data: JobType[] }) {
+export function JobsTable({ data }: { data: JobType[] }) {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -135,104 +137,141 @@ export function DataTable({ data }: { data: JobType[] }) {
   );
 
   const router = useRouter();
-  
-  const handleDelete = React.useCallback(async (id: string) => {
-    try {
-      const res = await api.delete(`/jobs?id=${id}`);
-      if (res.status === 200) {
-        toast.success('Application has been deleted');
-        router.refresh(); 
-      } else {
-        toast.error('Failed to delete');
+
+  const handleDelete = React.useCallback(
+    async (id: string) => {
+      try {
+        const res = await api.delete(`/jobs?id=${id}`);
+        if (res.status === 200) {
+          toast.success('Application has been deleted');
+          router.refresh();
+        } else {
+          toast.error('Failed to delete');
+        }
+      } catch (err) {
+        toast.error('Something went wrong');
+        console.error(err);
       }
-    } catch (err) {
-      toast.error('Something went wrong');
-      console.error(err);
-    }
-  }, [router]);
-  
-  const columns: ColumnDef<JobType>[] = React.useMemo(() => [
-    {
-      id: 'drag',
-      header: () => null,
     },
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <div className="flex items-center justify-center">
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
+    [router],
+  );
+
+  const columns: ColumnDef<JobType>[] = React.useMemo(
+    () => [
+      {
+        id: 'drag',
+        header: () => null,
+      },
+      {
+        id: 'select',
+        header: ({ table }) => (
+          <div className="flex items-center justify-center">
+            <Checkbox
+              checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && 'indeterminate')
+              }
+              onCheckedChange={(value) =>
+                table.toggleAllPageRowsSelected(!!value)
+              }
+              aria-label="Select all"
             />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="flex items-center justify-center">
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        </div>
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
-      accessorKey: 'title',
-      header: 'Target Job',
-      cell: ({ row }) => <div>{row.original.title}</div>,
-    },
-    {
-      accessorKey: 'company',
-      header: 'Company',
-      cell: ({ row }) => <Badge variant="outline">{row.original.company}</Badge>,
-    },
-    {
-      accessorKey: 'status',
-      header: 'Status',
-      cell: ({ row }) => (
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {row.original.status === 'Rejected' ? (
-            <IconCircleCheckFilled className="fill-red-500 dark:fill-red-400" />
-          ) : (
-            <IconLoader />
-          )}
-          {row.original.status}
-        </Badge>
-      ),
-    },
-    {
-      accessorKey: 'date',
-      header: 'Application Date',
-      cell: ({ row }) => <div className="w-32">{new Date(row.original.appliedAt).toDateString()}</div>,
-    },
-    {
-      id: 'actions',
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="data-[state=open]:bg-muted text-muted-foreground flex size-8" size="icon">
-              <IconDotsVertical />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-32">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Favorite</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={() => handleDelete(row.original.id)}>
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    },
-  ], [handleDelete]);
+          </div>
+        ),
+        cell: ({ row }) => (
+          <div className="flex items-center justify-center">
+            <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Select row"
+            />
+          </div>
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      },
+      {
+        accessorKey: 'title',
+        header: 'Target Job',
+        cell: ({ row }) => <div>{row.original.title}</div>,
+      },
+      {
+        accessorKey: 'company',
+        header: 'Company',
+        cell: ({ row }) => (
+          <Badge variant="outline">{row.original.company}</Badge>
+        ),
+      },
+
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: ({ row }) => (
+          <Badge variant="outline" className="text-muted-foreground px-1.5">
+            {row.original.status === 'Rejected' ? (
+              <IconCircleCheckFilled className="fill-red-500 dark:fill-red-400" />
+            ) : (
+              <IconLoader />
+            )}
+            {row.original.status}
+          </Badge>
+        ),
+      },
+      {
+        accessorKey: 'date',
+        header: 'Application Date',
+        cell: ({ row }) => {
+          const appliedAt = row.original.appliedAt;
+          if (!appliedAt) return null;
+
+          const exactDate = format(new Date(appliedAt), 'PPpp');
+          const relative = formatDistanceToNow(new Date(appliedAt)) + ' ago';
+
+          return (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div  className=" cursor-default ">{relative}</div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{exactDate}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          );
+        },
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                size="icon"
+              >
+                <IconDotsVertical />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-32">
+              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem>Favorite</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => handleDelete(row.original.id)}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
+      },
+    ],
+    [handleDelete],
+  );
   const table = useReactTable({
     data,
     columns,
@@ -257,7 +296,7 @@ export function DataTable({ data }: { data: JobType[] }) {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
-  
+
   return (
     <Tabs
       defaultValue="outline"
@@ -299,10 +338,14 @@ export function DataTable({ data }: { data: JobType[] }) {
             </DropdownMenuContent>
           </DropdownMenu>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <Button variant="outline" size="sm" onClick={()=> setIsDialogOpen(true)}>
-                <IconPlus />
-                <span className="hidden lg:inline">Add Application</span>
-              </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsDialogOpen(true)}
+            >
+              <IconPlus />
+              <span className="hidden lg:inline">Add Application</span>
+            </Button>
             <DialogContent className="bg-card">
               <DialogHeader>
                 <DialogTitle className="mb-4">Save Application</DialogTitle>
@@ -342,7 +385,8 @@ export function DataTable({ data }: { data: JobType[] }) {
                   </TableRow>
                 ))}
               </TableHeader>
-              <TableBody className="**:data-[slot=table-cell]:first:w-8">
+              <TableBody 
+              className="**:data-[slot=table-cell]:first:w-2 **:data-[slot=table-cell]:last:w-2 **:data-[slot=table-cell]:nth-[6]:w-12">
                 {table.getRowModel().rows?.length ? (
                   <SortableContext
                     items={dataIds}
