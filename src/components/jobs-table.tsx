@@ -97,17 +97,25 @@ import {
   AlertDialogTitle,
 } from './ui/alert-dialog';
 import { Spinner } from './ui/spinner';
+import JobDetails from './job-details';
 
-function DraggableRow({ row }: { row: Row<JobType> }) {
+function DraggableRow({
+  row,
+  onSelect,
+}: {
+  row: Row<JobType>;
+  onSelect: (jobDetails: JobType) => void;
+}) {
   const { transform, transition, setNodeRef } = useSortable({
     id: row.original.id,
   });
 
   return (
     <TableRow
+      onClick={() => onSelect(row.original)}
       data-state={row.getIsSelected() && 'selected'}
       ref={setNodeRef}
-      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
+      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 cursor-pointer"
       style={{
         transform: CSS.Transform.toString(transform),
         transition: transition,
@@ -121,23 +129,28 @@ function DraggableRow({ row }: { row: Row<JobType> }) {
     </TableRow>
   );
 }
-
 export function JobsTable({ data }: { data: JobType[] }) {
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [isAddJobOpen, setIsAddJobOpen] = React.useState(false);
   const [rowSelection, setRowSelection] = React.useState({});
-  const idToDeleteRef = React.useRef<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [selectedJob, setSelectedJob] = React.useState<JobType | null>(null);
+  const [isJobDetailsOpen, setIsJobDetailsOpen] = React.useState(false);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   });
+
+  const idToDeleteRef = React.useRef<string | null>(null);
+
+  const router = useRouter();
+
   const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
@@ -149,7 +162,10 @@ export function JobsTable({ data }: { data: JobType[] }) {
     [data],
   );
 
-  const router = useRouter();
+  const onSelect = (jobDetails: JobType) => {
+    setSelectedJob(jobDetails);
+    setIsJobDetailsOpen(true);
+  };
 
   const handleDelete = React.useCallback(
     async (id: string | null) => {
@@ -358,11 +374,11 @@ export function JobsTable({ data }: { data: JobType[] }) {
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Dialog open={isAddJobOpen} onOpenChange={setIsAddJobOpen}>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setIsDialogOpen(true)}
+                onClick={() => setIsAddJobOpen(true)}
               >
                 <IconPlus />
                 <span className="hidden lg:inline">Add Application</span>
@@ -370,7 +386,7 @@ export function JobsTable({ data }: { data: JobType[] }) {
               <DialogContent className="bg-card">
                 <DialogHeader>
                   <DialogTitle className="mb-4">Save Application</DialogTitle>
-                  <JobForm setIsDialogOpen={setIsDialogOpen} />
+                  <JobForm setIsAddJobOpen={setIsAddJobOpen} />
                 </DialogHeader>
               </DialogContent>
             </Dialog>
@@ -413,7 +429,11 @@ export function JobsTable({ data }: { data: JobType[] }) {
                       strategy={verticalListSortingStrategy}
                     >
                       {table.getRowModel().rows.map((row) => (
-                        <DraggableRow key={row.id} row={row} />
+                        <DraggableRow
+                          key={row.id}
+                          row={row}
+                          onSelect={onSelect}
+                        />
                       ))}
                     </SortableContext>
                   ) : (
@@ -540,20 +560,21 @@ export function JobsTable({ data }: { data: JobType[] }) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className='cursor-pointer'>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="cursor-pointer">
+              Cancel
+            </AlertDialogCancel>
             <Button
-              className='w-[73px]'
+              className="w-[73px]"
               onClick={() => handleDelete(idToDeleteRef.current)}
             >
-              {isDeleteLoading ? (
-                <Spinner/>
-              ) : (
-                'Delete'
-              )}
+              {isDeleteLoading ? <Spinner /> : 'Delete'}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <Dialog open={isJobDetailsOpen} onOpenChange={setIsJobDetailsOpen}>
+        {selectedJob && <JobDetails jobData={selectedJob} />}
+      </Dialog>
     </>
   );
 }

@@ -23,7 +23,7 @@ import { toast } from 'sonner';
 import { api } from '@/lib/axios';
 import { useRouter } from 'next/navigation';
 
-export default function JobForm({setIsDialogOpen}: {setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
+export default function JobForm({setIsAddJobOpen}: {setIsAddJobOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
   const router = useRouter();
   const form = useForm<JobInputType>({
     resolver: zodResolver(jobSchema),
@@ -47,7 +47,7 @@ export default function JobForm({setIsDialogOpen}: {setIsDialogOpen: React.Dispa
         toast.success("Application has been saved")
         router.refresh();
       }
-      setIsDialogOpen(false)
+      setIsAddJobOpen(false)
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong")
