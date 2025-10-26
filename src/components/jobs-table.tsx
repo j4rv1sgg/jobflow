@@ -48,7 +48,6 @@ import {
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -98,24 +97,18 @@ import {
 } from './ui/alert-dialog';
 import { Spinner } from './ui/spinner';
 import JobDetails from './job-details';
+import { Link } from 'lucide-react';
 
-function DraggableRow({
-  row,
-  onSelect,
-}: {
-  row: Row<JobType>;
-  onSelect: (jobDetails: JobType) => void;
-}) {
+function DraggableRow({ row }: { row: Row<JobType> }) {
   const { transform, transition, setNodeRef } = useSortable({
     id: row.original.id,
   });
 
   return (
     <TableRow
-      onClick={() => onSelect(row.original)}
       data-state={row.getIsSelected() && 'selected'}
       ref={setNodeRef}
-      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 cursor-pointer"
+      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
       style={{
         transform: CSS.Transform.toString(transform),
         transition: transition,
@@ -197,37 +190,31 @@ export function JobsTable({ data }: { data: JobType[] }) {
         header: () => null,
       },
       {
-        id: 'select',
-        header: ({ table }) => (
-          <div className="flex items-center justify-center">
-            <Checkbox
-              checked={
-                table.getIsAllPageRowsSelected() ||
-                (table.getIsSomePageRowsSelected() && 'indeterminate')
-              }
-              onCheckedChange={(value) =>
-                table.toggleAllPageRowsSelected(!!value)
-              }
-              aria-label="Select all"
-            />
-          </div>
-        ),
+        accessorKey: 'link',
+        header: 'Link',
         cell: ({ row }) => (
-          <div className="flex items-center justify-center">
-            <Checkbox
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              aria-label="Select row"
-            />
-          </div>
+          <Button
+            variant="ghost"
+            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+            onClick={() => window.open(row.original.link, '_blank')}
+            size="icon"
+          >
+            <Link>{row.original.link}</Link>
+          </Button>
         ),
-        enableSorting: false,
-        enableHiding: false,
       },
+
       {
         accessorKey: 'title',
         header: 'Target Job',
-        cell: ({ row }) => <div>{row.original.title}</div>,
+        cell: ({ row }) => (
+          <div
+            onClick={() => onSelect(row.original)}
+            className="cursor-pointer"
+          >
+            {row.original.title}
+          </div>
+        ),
       },
       {
         accessorKey: 'company',
@@ -236,7 +223,6 @@ export function JobsTable({ data }: { data: JobType[] }) {
           <Badge variant="outline">{row.original.company}</Badge>
         ),
       },
-
       {
         accessorKey: 'status',
         header: 'Status',
@@ -429,11 +415,7 @@ export function JobsTable({ data }: { data: JobType[] }) {
                       strategy={verticalListSortingStrategy}
                     >
                       {table.getRowModel().rows.map((row) => (
-                        <DraggableRow
-                          key={row.id}
-                          row={row}
-                          onSelect={onSelect}
-                        />
+                        <DraggableRow key={row.id} row={row} />
                       ))}
                     </SortableContext>
                   ) : (
@@ -450,13 +432,9 @@ export function JobsTable({ data }: { data: JobType[] }) {
               </Table>
             </DndContext>
           </div>
-          <div className="flex items-center justify-between px-4">
-            <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-              {table.getFilteredSelectedRowModel().rows.length} of{' '}
-              {table.getFilteredRowModel().rows.length} row(s) selected.
-            </div>
-            <div className="flex w-full items-center gap-8 lg:w-fit">
-              <div className="hidden items-center gap-2 lg:flex">
+          <div className="flex justify-end px-4">
+            <div className="flex w-full items-center gap-8 lg:w-fit ">
+              <div className="hidden items-center gap-2 lg:flex ">
                 <Label htmlFor="rows-per-page" className="text-sm font-medium">
                   Rows per page
                 </Label>
