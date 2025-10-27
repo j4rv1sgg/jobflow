@@ -48,7 +48,7 @@ export default function SignUpForm() {
   const onSubmit = async (data: SignUpInputType) => {
     const res = await signUp(data);
     if (res.success) {
-      router.push('/dashboard');
+      router.replace('/dashboard');
     } else {
       setServerError(res.message ?? '');
     }

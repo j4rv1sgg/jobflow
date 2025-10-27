@@ -23,7 +23,11 @@ import { toast } from 'sonner';
 import { api } from '@/lib/axios';
 import { useRouter } from 'next/navigation';
 
-export default function JobForm({setIsAddJobOpen}: {setIsAddJobOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
+export default function JobForm({
+  setIsAddJobOpen,
+}: {
+  setIsAddJobOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const router = useRouter();
   const form = useForm<JobInputType>({
     resolver: zodResolver(jobSchema),
@@ -42,15 +46,15 @@ export default function JobForm({setIsAddJobOpen}: {setIsAddJobOpen: React.Dispa
   const onSubmit = async (data: JobInputType) => {
     try {
       const res = await api.post('/jobs', data);
-      if(res.status === 201) {
+      if (res.status === 201) {
         form.reset();
-        toast.success("Application has been saved")
+        toast.success('Application has been saved');
         router.refresh();
       }
-      setIsAddJobOpen(false)
+      setIsAddJobOpen(false);
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong")
+      toast.error('Something went wrong');
     }
   };
 
@@ -129,9 +133,15 @@ export default function JobForm({setIsAddJobOpen}: {setIsAddJobOpen: React.Dispa
           )}
         />
         <div className="flex gap-2">
-          <Button className="w-1/2 flex flex-col gap-0" onClick={handleGenerateCoverLetter}>
+          <Button
+            className="w-1/2 flex flex-col gap-0"
+            onClick={(e) => {
+              e.preventDefault();
+              handleGenerateCoverLetter();
+            }}
+          >
             <p>Generate Cover Letter</p>
-            <p className='text-[10px]'>powered by AI</p>
+            <p className="text-[10px]">powered by AI</p>
           </Button>
           <Button
             type="submit"

@@ -37,7 +37,7 @@ export function NavUser({
       const res = await authClient.signOut();
 
       if ('data' in res && res.data?.success) {
-        router.push('/auth/sign-in');
+        router.replace('/auth/sign-in');
       } else if ('error' in res) {
         console.error('Logout failed:', res.error?.message);
       }

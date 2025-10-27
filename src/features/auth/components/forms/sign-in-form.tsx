@@ -38,7 +38,7 @@ export default function SignInForm() {
     try {
       const res = await signIn(data);
       if (res.success) {
-        router.push('/dashboard');
+        router.replace('/dashboard');
       }
     } catch (error: unknown) {
       console.log(error);
