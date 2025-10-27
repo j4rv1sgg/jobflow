@@ -22,6 +22,8 @@ import {
 import { toast } from 'sonner';
 import { api } from '@/lib/axios';
 import { useRouter } from 'next/navigation';
+import { Spinner } from '@/components/ui/spinner';
+import { useState } from 'react';
 
 export default function JobForm({
   setIsAddJobOpen,
@@ -29,6 +31,8 @@ export default function JobForm({
   setIsAddJobOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
+  const [isGenerating, setIsGenerating] = useState(false);
+
   const form = useForm<JobInputType>({
     resolver: zodResolver(jobSchema),
     defaultValues: {
@@ -60,8 +64,19 @@ export default function JobForm({
 
   const handleGenerateCoverLetter = async () => {
     const data = form.getValues();
-    const response = await generateCoverLetter(data);
-    form.setValue('coverLetter', response);
+    if(!data.description || data.description.trim().length <= 50){
+      toast.error('Description should be at least 50 characters');
+      return
+    }
+    try {
+      setIsGenerating(true);
+      const response = await generateCoverLetter(data);
+      form.setValue('coverLetter', response);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -135,20 +150,27 @@ export default function JobForm({
         <div className="flex gap-2">
           <Button
             className="w-1/2 flex flex-col gap-0"
+            disabled={isGenerating || formState.isSubmitting || !formState.isValid}
             onClick={(e) => {
               e.preventDefault();
               handleGenerateCoverLetter();
             }}
           >
-            <p>Generate Cover Letter</p>
-            <p className="text-[10px]">powered by AI</p>
+            {isGenerating ? (
+              <Spinner />
+            ) : (
+              <>
+                <p>Generate Cover Letter</p>
+                <p className="text-[10px]">powered by AI</p>
+              </>
+            )}
           </Button>
           <Button
             type="submit"
             className="w-1/2"
             disabled={formState.isSubmitting}
           >
-            {formState.isSubmitting ? 'Saving...' : 'Save'}
+            {formState.isSubmitting ? <Spinner /> : 'Save'}
           </Button>
         </div>
       </form>
