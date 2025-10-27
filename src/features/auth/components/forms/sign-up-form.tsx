@@ -21,7 +21,16 @@ export const signUpSchema = z.object({
   name: z.string().min(1, 'Name is required').min(2, 'Name is too short'),
   email: z.string().min(1, 'Email is required').email('Invalid email'),
   password: z.string().min(8, 'Password must be at least 8 chars'),
-});
+  confirmPassword: z.string().min(8, 'Password must be at least 8 chars'),
+}).refine(
+  (values) => {
+    return values.password === values.confirmPassword;
+  },
+  {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  }
+);;
 export type SignUpInputType = z.infer<typeof signUpSchema>;
 
 export default function SignUpForm() {
@@ -33,6 +42,7 @@ export default function SignUpForm() {
       name: '',
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
   const onSubmit = async (data: SignUpInputType) => {
@@ -88,6 +98,19 @@ export default function SignUpForm() {
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="Your password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="Retype your password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

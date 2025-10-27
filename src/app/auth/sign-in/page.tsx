@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import SignInForm, {
-} from '@/features/auth/components/forms/SignInForm';
+} from '@/features/auth/components/forms/sign-in-form';
 import Link from 'next/link';
 
 export default function SignUpPage() {

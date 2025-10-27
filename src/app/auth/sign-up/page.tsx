@@ -1,5 +1,5 @@
 import SignUpForm, {
-} from '@/features/auth/components/forms/SignUpForm';
+} from '@/features/auth/components/forms/sign-up-form';
 import Link from 'next/link';
 import {
   Card,

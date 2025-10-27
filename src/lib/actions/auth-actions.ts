@@ -1,9 +1,9 @@
 'use server';
 
-import { SignUpInputType } from '@/features/auth/components/forms/SignUpForm';
+import { SignUpInputType } from '@/features/auth/components/forms/sign-up-form';
 import { auth } from '../auth';
 import { headers } from 'next/headers';
-import { SignInInputType } from '@/features/auth/components/forms/SignInForm';
+import { SignInInputType } from '@/features/auth/components/forms/sign-in-form';
 
 export const signUp = async (data: SignUpInputType) => {
   try {
