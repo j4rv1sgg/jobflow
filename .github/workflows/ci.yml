@@ -10,6 +10,11 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_URL }}
+      COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
+
     steps:
       # 1. Checkout code
       - uses: actions/checkout@v3
