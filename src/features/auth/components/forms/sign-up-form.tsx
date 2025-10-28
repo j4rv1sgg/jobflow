@@ -16,25 +16,29 @@ import { Button } from '@/components/ui/button';
 import { signUp } from '@/lib/actions/auth-actions';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Spinner } from '@/components/ui/spinner';
 
-export const signUpSchema = z.object({
-  name: z.string().min(1, 'Name is required').min(2, 'Name is too short'),
-  email: z.string().min(1, 'Email is required').email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 chars'),
-  confirmPassword: z.string().min(8, 'Password must be at least 8 chars'),
-}).refine(
-  (values) => {
-    return values.password === values.confirmPassword;
-  },
-  {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  }
-);;
+export const signUpSchema = z
+  .object({
+    name: z.string().min(1, 'Name is required').min(2, 'Name is too short'),
+    email: z.string().min(1, 'Email is required').email('Invalid email'),
+    password: z.string().min(8, 'Password must be at least 8 chars'),
+    confirmPassword: z.string().min(8, 'Password must be at least 8 chars'),
+  })
+  .refine(
+    (values) => {
+      return values.password === values.confirmPassword;
+    },
+    {
+      message: "Passwords don't match",
+      path: ['confirmPassword'],
+    },
+  );
 export type SignUpInputType = z.infer<typeof signUpSchema>;
 
 export default function SignUpForm() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const form = useForm<SignUpInputType>({
     resolver: zodResolver(signUpSchema),
@@ -46,11 +50,16 @@ export default function SignUpForm() {
     },
   });
   const onSubmit = async (data: SignUpInputType) => {
-    const res = await signUp(data);
-    if (res.success) {
-      router.replace('/dashboard');
-    } else {
-      setServerError(res.message ?? '');
+    setIsLoading(true);
+    try {
+      const res = await signUp(data);
+      if (res.success) {
+        router.replace('/dashboard');
+      } else {
+        setServerError(res.message ?? '');
+      }
+    } catch (error: unknown) {
+      console.log((error as Error)?.message ?? '');
     }
   };
 
@@ -110,19 +119,19 @@ export default function SignUpForm() {
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Retype your password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="Retype your password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         {serverError && <FormMessage>{serverError}</FormMessage>}
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? 'Signing Up...' : 'Sign Up'}
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? <Spinner /> : 'Sign Up'}
         </Button>
       </form>
     </Form>

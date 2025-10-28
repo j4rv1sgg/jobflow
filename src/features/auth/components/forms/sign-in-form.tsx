@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { signIn } from '@/lib/actions/auth-actions';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Spinner } from '@/components/ui/spinner';
 
 export const signInSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email'),
@@ -25,6 +26,7 @@ export type SignInInputType = z.infer<typeof signInSchema>;
 
 export default function SignInForm() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<SignInInputType>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -32,15 +34,17 @@ export default function SignInForm() {
       password: '',
     },
   });
-  const { handleSubmit, setError, formState } = form;
+  const { handleSubmit, setError } = form;
   const [serverError, setServerError] = useState<string | null>(null);
   const onSubmit = async (data: SignInInputType) => {
     try {
+      setIsLoading(true);
       const res = await signIn(data);
       if (res.success) {
         router.replace('/dashboard');
       }
     } catch (error: unknown) {
+      setIsLoading(false);
       console.log(error);
       setServerError((error as Error)?.message ?? '');
       setError('password', {
@@ -82,9 +86,9 @@ export default function SignInForm() {
         <Button
           type="submit"
           className="w-full"
-          disabled={formState.isSubmitting}
+          disabled={isLoading}
         >
-          {formState.isSubmitting ? 'Signing In...' : 'Sign In'}
+          {isLoading ? <Spinner /> : 'Sign In'}
         </Button>
       </form>
     </Form>

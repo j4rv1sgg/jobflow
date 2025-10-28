@@ -219,15 +219,13 @@ export function JobsTable({ data }: { data: JobType[] }) {
         accessorKey: 'company',
         header: 'Company',
         cell: ({ row }) => (
-          <Badge variant="outline">{row.original.company}</Badge>
+          <Badge variant="outline" className='font-bold'>{row.original.company}</Badge>
         ),
       },
       {
         accessorKey: 'status',
         header: 'Status',
-        cell: ({ row }) => (
-          <StatusSelect jobData={row.original} />
-        ),
+        cell: ({ row }) => <StatusSelect jobData={row.original} />,
       },
       {
         accessorKey: 'date',
@@ -268,7 +266,9 @@ export function JobsTable({ data }: { data: JobType[] }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
-              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsJobDialogOpen(true)}>
+                Edit
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 variant="destructive"
