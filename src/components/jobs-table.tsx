@@ -74,7 +74,6 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { JobType } from '@/features/jobs/types/job';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import JobForm from '@/features/jobs/components/forms/job-form';
-import { api } from '@/lib/axios';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -97,6 +96,7 @@ import { Spinner } from './ui/spinner';
 import { Link } from 'lucide-react';
 import JobDialog from '../features/jobs/components/job-dialog';
 import { StatusSelect } from '@/features/jobs/components/status-select';
+import { deleteJob } from '@/features/jobs/lib/services/jobs';
 
 function DraggableRow({ row }: { row: Row<JobType> }) {
   const { transform, transition, setNodeRef } = useSortable({
@@ -164,7 +164,7 @@ export function JobsTable({ data }: { data: JobType[] }) {
       if (!id) return;
       setIsDeleteLoading(true);
       try {
-        const res = await api.delete(`/jobs?id=${id}`);
+        const res = await deleteJob(id);
         if (res.status === 200) {
           toast.success('Application has been deleted');
           router.refresh();

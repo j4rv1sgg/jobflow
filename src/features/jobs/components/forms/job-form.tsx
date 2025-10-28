@@ -13,17 +13,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { generateCoverLetter } from '../../lib/generate-cover-letter';
+import { generateCoverLetter } from '../../lib/services/jobs';
 import {
   JobInputType,
   jobSchema,
 } from '../../lib/validations/job-schema';
 import { toast } from 'sonner';
-import { api } from '@/lib/axios';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/ui/spinner';
 import { useState } from 'react';
 import { JobStatus } from '../../types/job';
+import { postJob } from '../../lib/services/jobs';
 
 export default function JobForm({
   setIsAddJobOpen,
@@ -49,7 +49,7 @@ export default function JobForm({
 
   const onSubmit = async (data: JobInputType) => {
     try {
-      const res = await api.post('/jobs', data);
+      const res = await postJob(data);
       if (res.status === 201) {
         form.reset();
         toast.success('Application has been saved');

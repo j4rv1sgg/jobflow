@@ -8,8 +8,8 @@ import {
 } from '@/components/ui/select';
 import StatusBadge from './status-badge';
 import { JobStatus, JobType } from '../types/job';
-import { api } from '@/lib/axios';
 import { toast } from 'sonner';
+import { updateJob } from '../lib/services/jobs';
 
 const statuses = Object.values(JobStatus);
 
@@ -19,10 +19,7 @@ export function StatusSelect({ jobData }: { jobData: JobType }) {
   const handleChange = async (value: JobStatus) => {
     try {
       setValue(value);
-      await api.patch(`/jobs?id=${jobData.id}`, {
-        status: value,
-        updatedAt: new Date(),
-      });
+      updateJob({ id: jobData.id, data: { status: value } });
     } catch (error) {
       console.log(error);
       toast.error('Something went wrong');
