@@ -24,10 +24,8 @@ import {
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
-  IconCircleCheckFilled,
   IconDotsVertical,
   IconLayoutColumns,
-  IconLoader,
   IconPlus,
 } from '@tabler/icons-react';
 import {
@@ -96,8 +94,9 @@ import {
   AlertDialogTitle,
 } from './ui/alert-dialog';
 import { Spinner } from './ui/spinner';
-import JobDetails from './job-details';
 import { Link } from 'lucide-react';
+import JobDialog from '../features/jobs/components/job-dialog';
+import StatusBadge from './status-badge';
 
 function DraggableRow({ row }: { row: Row<JobType> }) {
   const { transform, transition, setNodeRef } = useSortable({
@@ -128,7 +127,7 @@ export function JobsTable({ data }: { data: JobType[] }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
   const [selectedJob, setSelectedJob] = React.useState<JobType | null>(null);
-  const [isJobDetailsOpen, setIsJobDetailsOpen] = React.useState(false);
+  const [isJobDialogOpen, setIsJobDialogOpen] = React.useState(false);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
@@ -157,7 +156,7 @@ export function JobsTable({ data }: { data: JobType[] }) {
 
   const onSelect = (jobDetails: JobType) => {
     setSelectedJob(jobDetails);
-    setIsJobDetailsOpen(true);
+    setIsJobDialogOpen(true);
   };
 
   const handleDelete = React.useCallback(
@@ -227,14 +226,7 @@ export function JobsTable({ data }: { data: JobType[] }) {
         accessorKey: 'status',
         header: 'Status',
         cell: ({ row }) => (
-          <Badge variant="outline" className="text-muted-foreground px-1.5">
-            {row.original.status === 'Rejected' ? (
-              <IconCircleCheckFilled className="fill-red-500 dark:fill-red-400" />
-            ) : (
-              <IconLoader />
-            )}
-            {row.original.status}
-          </Badge>
+          <StatusBadge status={row.original.status} />
         ),
       },
       {
@@ -506,24 +498,6 @@ export function JobsTable({ data }: { data: JobType[] }) {
             </div>
           </div>
         </TabsContent>
-        <TabsContent
-          value="past-performance"
-          className="flex flex-col px-4 lg:px-6"
-        >
-          <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-        </TabsContent>
-        <TabsContent
-          value="key-personnel"
-          className="flex flex-col px-4 lg:px-6"
-        >
-          <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-        </TabsContent>
-        <TabsContent
-          value="focus-documents"
-          className="flex flex-col px-4 lg:px-6"
-        >
-          <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-        </TabsContent>
       </Tabs>
       <AlertDialog
         open={isDeleteDialogOpen}
@@ -550,8 +524,8 @@ export function JobsTable({ data }: { data: JobType[] }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <Dialog open={isJobDetailsOpen} onOpenChange={setIsJobDetailsOpen}>
-        {selectedJob && <JobDetails jobData={selectedJob} />}
+      <Dialog open={isJobDialogOpen} onOpenChange={setIsJobDialogOpen}>
+        {selectedJob && <JobDialog jobData={selectedJob} />}
       </Dialog>
     </>
   );

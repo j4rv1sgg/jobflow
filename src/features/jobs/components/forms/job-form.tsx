@@ -64,9 +64,9 @@ export default function JobForm({
 
   const handleGenerateCoverLetter = async () => {
     const data = form.getValues();
-    if(!data.description || data.description.trim().length <= 50){
+    if (!data.description || data.description.trim().length <= 50) {
       toast.error('Description should be at least 50 characters');
-      return
+      return;
     }
     try {
       setIsGenerating(true);
@@ -150,7 +150,9 @@ export default function JobForm({
         <div className="flex gap-2">
           <Button
             className="w-1/2 flex flex-col gap-0"
-            disabled={isGenerating || formState.isSubmitting || !formState.isValid}
+            disabled={
+              isGenerating || formState.isSubmitting || !formState.isValid
+            }
             onClick={(e) => {
               e.preventDefault();
               handleGenerateCoverLetter();

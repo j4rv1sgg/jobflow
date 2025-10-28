@@ -1,3 +1,10 @@
+export type JobStatus =
+  | 'applied'
+  | 'screening'
+  | 'interview'
+  | 'rejected'
+  | 'offer';
+
 export type JobType = {
   id: string;
   userId: string;
@@ -5,7 +12,7 @@ export type JobType = {
   title: string;
   link: string;
   description: string | null;
-  status: string;
+  status: JobStatus;
   notes: string | null;
   coverLetter: string | null;
   appliedAt: Date;
