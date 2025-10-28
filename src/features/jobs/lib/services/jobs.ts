@@ -3,13 +3,14 @@ import { JobInputType } from '../validations/job-schema';
 
 export async function postJob(data: JobInputType) {
   const res = await api.post('/jobs', data);
-  if (res.statusText !== 'OK') throw new Error('Failed to post jobs');
+  if (res.status !== 201) throw new Error('Failed to post jobs');
   return res;
 }
 
 export async function deleteJob(id: string) {
   const res = await api.delete(`/jobs?id=${id}`);
-  if (res.statusText !== 'OK') throw new Error('Failed to delete job');
+  console.log(res)
+  if (res.status !== 200) throw new Error('Failed to delete job');
   return res;
 }
 
