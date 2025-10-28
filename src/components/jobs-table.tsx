@@ -96,7 +96,7 @@ import {
 import { Spinner } from './ui/spinner';
 import { Link } from 'lucide-react';
 import JobDialog from '../features/jobs/components/job-dialog';
-import StatusBadge from './status-badge';
+import { StatusSelect } from '@/features/jobs/components/status-select';
 
 function DraggableRow({ row }: { row: Row<JobType> }) {
   const { transform, transition, setNodeRef } = useSortable({
@@ -226,7 +226,7 @@ export function JobsTable({ data }: { data: JobType[] }) {
         accessorKey: 'status',
         header: 'Status',
         cell: ({ row }) => (
-          <StatusBadge status={row.original.status} />
+          <StatusSelect jobData={row.original} />
         ),
       },
       {

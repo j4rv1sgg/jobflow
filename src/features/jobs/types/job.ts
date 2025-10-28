@@ -1,9 +1,10 @@
-export type JobStatus =
-  | 'applied'
-  | 'screening'
-  | 'interview'
-  | 'rejected'
-  | 'offer';
+export enum JobStatus {
+  applied = 'applied',
+  interview = 'interview',
+  screening = 'screening',
+  offer = 'offer',
+  rejected = 'rejected',
+}
 
 export type JobType = {
   id: string;

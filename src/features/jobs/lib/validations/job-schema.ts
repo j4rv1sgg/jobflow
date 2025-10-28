@@ -1,11 +1,5 @@
 import z from "zod";
-
-export enum JobStatus {
-  applied = 'applied',
-  interview = 'interview',
-  offer = 'offer',
-  rejected = 'rejected',
-}
+import { JobStatus } from "../../types/job";
 
 export const jobSchema = z.object({
   company: z.string().min(1),

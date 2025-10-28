@@ -17,13 +17,13 @@ import { generateCoverLetter } from '../../lib/generate-cover-letter';
 import {
   JobInputType,
   jobSchema,
-  JobStatus,
 } from '../../lib/validations/job-schema';
 import { toast } from 'sonner';
 import { api } from '@/lib/axios';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/ui/spinner';
 import { useState } from 'react';
+import { JobStatus } from '../../types/job';
 
 export default function JobForm({
   setIsAddJobOpen,
