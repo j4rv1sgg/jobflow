@@ -111,7 +111,7 @@ export async function PATCH(req: Request) {
   try {
     const [updated] = await db
       .update(jobs)
-      .set(parsed.data)
+      .set({ ...parsed.data, updatedAt: new Date()} )
       .where(eq(jobs.id, id))
       .returning();
 

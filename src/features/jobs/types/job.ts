@@ -18,5 +18,5 @@ export type JobType = {
   coverLetter: string | null;
   appliedAt: Date;
   createdAt: Date;
-  updatedAt: Date | null;
+  updatedAt: Date;
 };
