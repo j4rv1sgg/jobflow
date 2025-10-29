@@ -174,8 +174,8 @@ export function JobsTable({ data }: { data: JobType[] }) {
       } catch (err) {
         toast.error('Something went wrong');
         console.error(err);
-      } finally {
         setIsDeleteLoading(false);
+      } finally {
         setIsDeleteDialogOpen(false);
       }
     },
@@ -525,7 +525,7 @@ export function JobsTable({ data }: { data: JobType[] }) {
         </AlertDialogContent>
       </AlertDialog>
       <Dialog open={isJobDialogOpen} onOpenChange={setIsJobDialogOpen}>
-        {selectedJob && <JobDialog jobData={selectedJob} />}
+        {selectedJob && <JobDialog setIsJobDialogOpen={setIsJobDialogOpen} jobData={selectedJob} />}
       </Dialog>
     </>
   );

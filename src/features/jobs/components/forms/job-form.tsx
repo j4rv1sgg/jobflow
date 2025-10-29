@@ -14,10 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { generateCoverLetter } from '../../lib/services/jobs';
-import {
-  JobInputType,
-  jobSchema,
-} from '../../lib/validations/job-schema';
+import { JobInputType, jobSchema } from '../../lib/validations/job-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/ui/spinner';
@@ -84,10 +81,10 @@ export default function JobForm({
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="company"
+          name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Company</FormLabel>
+              <FormLabel>Job Title</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -97,10 +94,10 @@ export default function JobForm({
         />
         <FormField
           control={form.control}
-          name="title"
+          name="company"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Job Title</FormLabel>
+              <FormLabel>Company</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>

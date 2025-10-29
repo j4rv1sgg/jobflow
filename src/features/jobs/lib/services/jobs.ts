@@ -9,7 +9,6 @@ export async function postJob(data: JobInputType) {
 
 export async function deleteJob(id: string) {
   const res = await api.delete(`/jobs?id=${id}`);
-  console.log(res)
   if (res.status !== 200) throw new Error('Failed to delete job');
   return res;
 }
