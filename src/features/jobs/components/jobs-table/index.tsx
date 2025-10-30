@@ -3,10 +3,6 @@
 import * as React from 'react';
 import {
   IconChevronDown,
-  IconChevronLeft,
-  IconChevronRight,
-  IconChevronsLeft,
-  IconChevronsRight,
   IconDotsVertical,
   IconLayoutColumns,
   IconPlus,
@@ -35,14 +31,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -52,7 +40,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { JobType } from '@/features/jobs/types/job';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../../../../components/ui/dialog';
 import JobForm from '@/features/jobs/components/forms/job-form';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -62,7 +55,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './ui/tooltip';
+} from '../../../../components/ui/tooltip';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -71,12 +64,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from './ui/alert-dialog';
-import { Spinner } from './ui/spinner';
+} from '../../../../components/ui/alert-dialog';
+import { Spinner } from '../../../../components/ui/spinner';
 import { Link } from 'lucide-react';
-import JobDialog from '../features/jobs/components/job-dialog';
+import JobDialog from '../job-dialog';
 import { StatusSelect } from '@/features/jobs/components/status-select';
 import { deleteJob } from '@/features/jobs/lib/services/jobs';
+import Pagination from './pagination';
 
 export function JobsTable({ data }: { data: JobType[] }) {
   const [isAddJobOpen, setIsAddJobOpen] = React.useState(false);
@@ -354,79 +348,7 @@ export function JobsTable({ data }: { data: JobType[] }) {
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-end px-4">
-        <div className="flex w-full items-center gap-8 lg:w-fit ">
-          <div className="hidden items-center gap-2 lg:flex ">
-            <Label htmlFor="rows-per-page" className="text-sm font-medium">
-              Rows per page
-            </Label>
-            <Select
-              value={`${table.getState().pagination.pageSize}`}
-              onValueChange={(value) => {
-                table.setPageSize(Number(value));
-              }}
-            >
-              <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                <SelectValue
-                  placeholder={table.getState().pagination.pageSize}
-                />
-              </SelectTrigger>
-              <SelectContent side="top">
-                {[10, 20, 30, 40, 50].map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex w-fit items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of{' '}
-            {table.getPageCount()}
-          </div>
-          <div className="ml-auto flex items-center gap-2 lg:ml-0">
-            <Button
-              variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <span className="sr-only">Go to first page</span>
-              <IconChevronsLeft />
-            </Button>
-            <Button
-              variant="outline"
-              className="size-8"
-              size="icon"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <span className="sr-only">Go to previous page</span>
-              <IconChevronLeft />
-            </Button>
-            <Button
-              variant="outline"
-              className="size-8"
-              size="icon"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <span className="sr-only">Go to next page</span>
-              <IconChevronRight />
-            </Button>
-            <Button
-              variant="outline"
-              className="hidden size-8 lg:flex"
-              size="icon"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            >
-              <span className="sr-only">Go to last page</span>
-              <IconChevronsRight />
-            </Button>
-          </div>
-        </div>
-      </div>
+      <Pagination table={table} />
       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}

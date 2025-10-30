@@ -74,5 +74,5 @@ export const jobs = pgTable('jobs', {
   coverLetter: text('cover_letter'),
   appliedAt: timestamp('applied_at').defaultNow().notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at'),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
