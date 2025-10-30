@@ -9,8 +9,15 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import JobEditForm from './forms/job-edit-form';
+import { format } from 'date-fns';
 
-export default function JobDialog({ jobData, setIsJobDialogOpen }: { jobData: JobType, setIsJobDialogOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function JobDialog({
+  jobData,
+  setIsJobDialogOpen,
+}: {
+  jobData: JobType;
+  setIsJobDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   return (
     <DialogContent className="bg-card lg:max-w-[80vw] h-[80vh] overflow-y-auto flex flex-col">
       <DialogHeader>
@@ -37,9 +44,16 @@ export default function JobDialog({ jobData, setIsJobDialogOpen }: { jobData: Jo
             </DialogDescription>
           </div>
           <Separator className="mx-4" orientation="vertical" />
+          <div className="lg:w-1/2 text-muted-foreground">
+            <p>Applied At: {format(jobData.appliedAt, 'dd/MM/yyyy HH:mm')}</p>
+            <p>Updated At: {format(jobData.updatedAt, 'dd/MM/yyyy HH:mm')}</p>
+          </div>
         </TabsContent>
-        <TabsContent value="edit" >
-            <JobEditForm setIsJobDialogOpen={setIsJobDialogOpen} jobData={jobData} />
+        <TabsContent value="edit">
+          <JobEditForm
+            setIsJobDialogOpen={setIsJobDialogOpen}
+            jobData={jobData}
+          />
         </TabsContent>
       </Tabs>
     </DialogContent>
