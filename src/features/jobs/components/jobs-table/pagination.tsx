@@ -16,7 +16,7 @@ import {
   IconChevronsRight,
 } from '@tabler/icons-react';
 
-export default function Pagination({ table }: { table: Table<JobType> }) {
+export function Pagination({ table }: { table: Table<JobType> }) {
   return (
     <div className="flex w-full self-end px-4 items-center gap-8 lg:w-fit ">
       <div className="hidden items-center gap-2 lg:flex ">
