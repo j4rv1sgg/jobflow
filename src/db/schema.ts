@@ -1,5 +1,12 @@
 import { JobStatus } from '@/features/jobs/types/job';
-import { pgTable, text, timestamp, boolean, uuid } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -69,10 +76,26 @@ export const jobs = pgTable('jobs', {
   title: text('title').notNull(),
   link: text('link').notNull(),
   description: text('description'),
-  status: text("status").$type<JobStatus>().default(JobStatus.applied).notNull(),
+  status: text('status')
+    .$type<JobStatus>()
+    .default(JobStatus.applied)
+    .notNull(),
   notes: text('notes'),
   coverLetter: text('cover_letter'),
   appliedAt: timestamp('applied_at').defaultNow().notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const documents = pgTable('documents', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  documentTitle: varchar('document_title', { length: 255 }).notNull(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  filePath: text('file_path').notNull(),
+  fileName: varchar('file_name', { length: 255 }).notNull(),
+  text: text('text'),
+  summary: text('summary'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
