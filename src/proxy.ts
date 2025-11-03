@@ -2,18 +2,16 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
-export async function proxy(req: NextRequest) {
-  const sessionCookie = getSessionCookie(req);
-  const isDashboardRoute = req.nextUrl.pathname.startsWith("/dashboard");
-  const isAuthRoute = req.nextUrl.pathname.startsWith("/auth");
+export function proxy(req: NextRequest) {
+  const session = getSessionCookie(req);
+  const { pathname } = req.nextUrl;
 
-  if (isAuthRoute && sessionCookie) {
-    const dashboardUrl = new URL("dashboard", req.url);
-    return NextResponse.redirect(dashboardUrl);
+  if (pathname.startsWith("/auth") || pathname.startsWith("/_next") || pathname.startsWith("/api/public") || pathname.startsWith("/favicon.ico")) {
+    return NextResponse.next();
   }
 
-  if (isDashboardRoute && !sessionCookie) {
-    const loginUrl = new URL("auth/sign-in", req.url);
+  if (!session) {
+    const loginUrl = new URL("/auth/sign-in", req.url);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -21,5 +19,7 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/api/jobs/:path*"], 
+  matcher: [
+    "/((?!_next|auth|api/public|favicon.ico).*)", // skip auth and static routes
+  ],
 };
