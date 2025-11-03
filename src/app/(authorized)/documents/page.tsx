@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "@/lib/axios";
+import { uploadDocument } from "@/features/documents/services/documents";
 import { useState } from "react";
 
 export default function Documents() {
@@ -14,12 +14,8 @@ export default function Documents() {
 
     const formData = new FormData();
     formData.append("file", file);
-    const res = await api.post("/documents/upload-resume", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    console.log(res.data.text)
+    const res = await uploadDocument(formData);
+    console.log(res)
   };
 
   return (

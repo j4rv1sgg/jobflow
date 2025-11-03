@@ -232,7 +232,7 @@ export const TableControlsAndTable = React.memo(function TableControlsAndTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm" onClick={onAddClick}>
+          <Button variant="default" size="sm" onClick={onAddClick}>
             <IconPlus />
             <span className="hidden lg:inline">Add Application</span>
           </Button>
