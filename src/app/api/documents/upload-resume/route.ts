@@ -104,8 +104,9 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
+
     // Response
-    return NextResponse.json({ text: pdfData.text }, { status: 200 });
+    return NextResponse.json({ text: pdfData.text }, { status: 201 });
 
   } catch (error) {
     console.log(error);
