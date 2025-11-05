@@ -14,17 +14,27 @@ import { Label } from '@/components/ui/label';
 import { File } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { Spinner } from '@/components/ui/spinner';
 
 interface Props {
-  files: File[];
-  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  uploadFiles: File[];
+  setUploadFiles: React.Dispatch<React.SetStateAction<File[]>>;
   handleUpload: (documentTitle: string) => void;
+  isUploading: boolean;
 }
 
-export default function UploadDialog({ files, setFiles, handleUpload }: Props) {
-  const [documentTitle, setDocumentTitle] = useState<string>(''); 
+export default function UploadDialog({isUploading, uploadFiles, setUploadFiles, handleUpload }: Props) {
+  const [documentTitle, setDocumentTitle] = useState<string>('');
+  const handleDrop = (acceptedFiles: File[]) => {
+    if (uploadFiles.length > 0) {
+      toast.error('You can only upload one file');
+      return;
+    }
+    setUploadFiles(acceptedFiles);
+  };
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (acceptedFiles) => setFiles(acceptedFiles),
+    onDrop: handleDrop,
   });
 
   return (
@@ -81,7 +91,7 @@ export default function UploadDialog({ files, setFiles, handleUpload }: Props) {
                     name="file-upload-2"
                     accept=".pdf"
                     type="file"
-                    disabled={files.length > 0}
+                    disabled={uploadFiles.length > 0}
                     className="sr-only"
                   />
                 </label>
@@ -93,17 +103,17 @@ export default function UploadDialog({ files, setFiles, handleUpload }: Props) {
             <span>Only PDF are allowed to upload.</span>
             <span className="pl-1 sm:pl-0">Max. size of file: 5MB</span>
           </p>
-          {files.length > 0 && (
+          {uploadFiles.length > 0 && (
             <>
               <h4 className="mt-6 font-medium text-foreground">
                 File to upload
               </h4>
               <ul role="list" className="mt-4 space-y-4">
-                {files.map((file) => (
+                {uploadFiles.map((file) => (
                   <FileUploadItem
                     key={file.name}
                     file={file}
-                    setFiles={setFiles}
+                    setUploadFiles={setUploadFiles}
                   />
                 ))}
               </ul>
@@ -115,8 +125,8 @@ export default function UploadDialog({ files, setFiles, handleUpload }: Props) {
         <DialogClose asChild>
           <Button variant="outline">Cancel</Button>
         </DialogClose>
-        <Button type="submit" onClick={() => handleUpload(documentTitle)}>
-          Upload
+        <Button type="submit" disabled={isUploading} onClick={() => handleUpload(documentTitle)}>
+          {isUploading ? <Spinner /> : 'Upload'}
         </Button>
       </DialogFooter>
     </DialogContent>

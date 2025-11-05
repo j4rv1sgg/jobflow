@@ -1,30 +1,35 @@
 'use client';
 
+import React from 'react';
+import UploadDialog from '@/features/documents/components/file-upload/upload-dialog';
 import { SiteHeader } from '@/components/site-header';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { IconPlus } from '@tabler/icons-react';
-import React from 'react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import UploadDialog from '@/features/documents/components/file-upload/upload-dialog';
 import { uploadDocument } from '@/features/documents/services/documents';
 
 export default function Documents() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [files, setFiles] = React.useState<File[]>([]);
+  const [uploadFiles, setUploadFiles] = React.useState<File[]>([]);
+  const [isUploading, setUploading] = useState(false);
 
   const handleUpload = async (documentTitle: string) => {
-    if (files.length === 0) {
+    if (uploadFiles.length === 0) {
       toast.error('Please select a file');
       return;
     }
-
+    setUploading(true);
     const formData = new FormData();
     formData.append('documentTitle', documentTitle);
-    formData.append('file', files[0]);
+    formData.append('file', uploadFiles[0]);
     const res = await uploadDocument(formData);
-    console.log(res);
+    if (res?.status === 201) {
+      setIsDialogOpen(false);
+      toast.success('Document uploaded successfully');
+    }
+    setUploading(false);
   };
 
   return (
@@ -44,9 +49,10 @@ export default function Documents() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <form>
             <UploadDialog
-              files={files}
-              setFiles={setFiles}
+              uploadFiles={uploadFiles}
+              setUploadFiles={setUploadFiles}
               handleUpload={handleUpload}
+              isUploading={isUploading}
             />
           </form>
         </Dialog>

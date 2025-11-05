@@ -5,11 +5,11 @@ import { Trash, File } from 'lucide-react';
 export default function FileUploadItem({
   key,
   file,
-  setFiles,
+  setUploadFiles,
 }: {
   key: string;
   file: File;
-  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  setUploadFiles: React.Dispatch<React.SetStateAction<File[]>>;
 }) {
   return (
     <li key={key} className="relative">
@@ -21,7 +21,7 @@ export default function FileUploadItem({
             size="icon"
             aria-label="Remove file"
             onClick={() =>
-              setFiles((prevFiles) =>
+              setUploadFiles((prevFiles) =>
                 prevFiles.filter((prevFile) => prevFile.name !== file.name),
               )
             }
