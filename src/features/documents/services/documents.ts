@@ -12,3 +12,12 @@ export const uploadDocument = async (formData: FormData) => {
     console.error('Error uploading document:', err);
   }
 };
+
+export const getDocuments = async () => {
+  try {
+    const res = await api.get('/documents');
+    return res;
+  } catch (err) {
+    console.error('Error getting documents:', err);
+  }
+};
