@@ -8,9 +8,13 @@ import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { uploadDocument } from '@/features/documents/services/documents';
-import ReactMarkdown from 'react-markdown';
+import { DocumentSelect } from '../types/document';
 
-export default function Documents({ docData }: any) {
+type DocumentType = DocumentSelect & {
+  downloadUrl: string
+}
+
+export default function Documents({ docData }: { docData: DocumentType[]}) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [uploadFiles, setUploadFiles] = React.useState<File[]>([]);
   const [isUploading, setUploading] = useState(false);
@@ -56,7 +60,7 @@ export default function Documents({ docData }: any) {
       </Dialog>
       {docData.length > 0 ? (
         <ul className="space-y-2">
-          {docData.map((doc: any) => (
+          {docData.map((doc: DocumentType) => (
             <li
               key={doc.id}
               className="border rounded-xl p-4 flex justify-between items-center"
@@ -71,9 +75,9 @@ export default function Documents({ docData }: any) {
                 <p className="text-sm text-gray-500">
                   Uploaded {new Date(doc.createdAt).toLocaleDateString()}
                 </p>
-                <p className="text-sm prose whitespace-pre-line line-clamp-2 text-gray-600 mt-1">
+                <p className="text-sm whitespace-pre-line line-clamp-2 text-gray-600 mt-1">
                   {doc.summary ? (
-                    <ReactMarkdown>{doc.summary}</ReactMarkdown>
+                    doc.summary
                   ) : (
                     'No summary available'
                   )}
