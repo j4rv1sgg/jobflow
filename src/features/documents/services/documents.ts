@@ -16,6 +16,7 @@ export const uploadDocument = async (formData: FormData) => {
 export const getDocuments = async () => {
   try {
     const res = await api.get('/documents');
+    console.log(res)
     return res;
   } catch (err) {
     console.error('Error getting documents:', err);
